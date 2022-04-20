@@ -62,16 +62,21 @@ class AGM:
         contractions = neg_sub_frm
         if neg_frm not in contractions:
             contractions = contractions + [neg_frm] 
+        print("")
         print("contractions: ", contractions)
         Len_belief_set = len(self.belief_base.belief_set)
         if Len_belief_set > 0:
             for i in range(Len_belief_set):
                 b = self.belief_base.belief_set[i]
                 b_frm = b.formula
+                print(" compare with: ", b_frm)
                 for b_sub in self.Belief_sub(b_frm):
+                    print("  check confliction: ", b_sub)
                     if b_sub in contractions: 
+                        print("    confliction found: ", b_frm)
                         new_inf_check += 1
                         if b.order <= order:  
+                            print("    remove: ", b_frm) 
                             self.belief_base.remove_belief(b)
                             self.Expansion(belief)
                         
