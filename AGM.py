@@ -30,8 +30,25 @@ class AGM:
 
 
     ### Check Subsets of a Belief (??)
-    def Belief_sub (self, frm):
+    def old_Belief_sub (self, frm):
         return frm.atoms()
+    
+    
+    ### Check Subsets of a Belief (??)
+    def Belief_sub (self, frm):
+        porpositions = ["|", "&", ">>", "<<", "(", ")"]
+        str_frm = str(frm)
+        frm_sub = []
+        for p in porpositions:
+            if p in str_frm:
+                str_frm = str_frm.replace(p, '')
+        str_frm = str_frm.split(" ")
+        for frm in str_frm:
+            if frm != "":
+                cnf_frm = to_cnf(frm)
+                if cnf_frm not in frm_sub:
+                    frm_sub.append(cnf_frm) 
+        return frm_sub
 
 
     ### Gain New Information - Revision
@@ -67,7 +84,10 @@ class AGM:
         subsets = self.Belief_sub(frm)
         for i in subsets:
             neg_sub_frm.append(self.Negation(i))
-        contractions = neg_sub_frm + [neg_frm] 
+        contractions = neg_sub_frm
+        if neg_frm not in contractions:
+            contractions = contractions + [neg_frm] 
+        print(contractions)
         Len_belief_set = len(self.belief_base.belief_set)
         if Len_belief_set > 0:
             for i in range(Len_belief_set):
