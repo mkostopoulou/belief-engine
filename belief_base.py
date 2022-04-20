@@ -14,7 +14,8 @@ class BeliefBase:
     def get_information(self):
         print("Define a formula : ")
         prop = input(PROMPT)
-        frm = to_cnf(prop.lower())
+        #frm = to_cnf(prop.lower())
+        frm = prop.lower()
 
         for belief in self.belief_set:
             if frm == belief.formula:

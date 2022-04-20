@@ -11,7 +11,7 @@ class AGM:
 
     ### Connectives
     def Negation (self, frm):
-        return ~(frm)
+        return ~(to_cnf(frm))
 
     def Conjunction (self, frm1, frm2):
         return frm1 and frm2
@@ -27,21 +27,20 @@ class AGM:
         imp1 = self.Implication(frm1, frm2)
         imp2 = self.Implication(frm2, frm1)
         return imp1 and imp2
-
-
-    ### Check Subsets of a Belief (??)
-    def old_Belief_sub (self, frm):
-        return frm.atoms()
     
     
-    ### Check Subsets of a Belief (??)
+    ### Check Subsets of a Belief
     def Belief_sub (self, frm):
-        porpositions = ["|", "&", ">>", "<<", "(", ")"]
+        porpositions = ["|", "&", "(", ")"]
+        imp = ['>>', '<<']
         str_frm = str(frm)
         frm_sub = []
         for p in porpositions:
             if p in str_frm:
-                str_frm = str_frm.replace(p, '')
+                str_frm = str_frm.replace(p, ' ')
+        for i in imp:
+            if i in str_frm:
+                str_frm = str_frm.replace(i, ' ')
         str_frm = str_frm.split(" ")
         for frm in str_frm:
             if frm != "":
@@ -49,30 +48,6 @@ class AGM:
                 if cnf_frm not in frm_sub:
                     frm_sub.append(cnf_frm) 
         return frm_sub
-
-
-    ### Gain New Information - Revision
-    def old_Revision (self, belief):
-        self.Contraction(belief) 
-        self.Expansion(belief)
-        return self.belief_base.belief_set
-
-
-    ### Gain New Information - Contraction
-    def old_Contraction (self, belief):
-        frm = belief.formula
-        neg_frm = self.Negation(frm)
-        neg_sub_frm = []
-        subsets = self.Belief_sub(frm)
-        for i in subsets:
-            neg_sub_frm.append(self.Negation(i))
-        contractions = neg_sub_frm + [neg_frm]
-        for belief in self.belief_base.belief_set:
-            if belief.formula in contractions:
-                self.belief_base.remove_belief(belief)
-
-        return self.belief_base.belief_set
-    
     
     ### Gain New Information - Revision + Contraction
     def Revision (self, belief):
@@ -87,16 +62,18 @@ class AGM:
         contractions = neg_sub_frm
         if neg_frm not in contractions:
             contractions = contractions + [neg_frm] 
-        print(contractions)
+        print("contractions: ", contractions)
         Len_belief_set = len(self.belief_base.belief_set)
         if Len_belief_set > 0:
             for i in range(Len_belief_set):
                 b = self.belief_base.belief_set[i]
-                if b.formula in contractions: 
-                    new_inf_check += 1
-                    if b.order < order:  
-                        self.belief_base.remove_belief(b)
-                        self.Expansion(belief)
+                b_frm = b.formula
+                for b_sub in self.Belief_sub(b_frm):
+                    if b_sub in contractions: 
+                        new_inf_check += 1
+                        if b.order <= order:  
+                            self.belief_base.remove_belief(b)
+                            self.Expansion(belief)
                         
             if new_inf_check == 0:
                 self.Expansion(belief)
