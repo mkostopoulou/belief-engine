@@ -22,7 +22,7 @@ class BeliefBase:
                 return None
 
         print("Define order for given formula : ")
-        order = input(PROMPT)
+        order = float(input(PROMPT))
         order = self.order_eval(order)
 
         return Belief(frm, order)
@@ -30,7 +30,7 @@ class BeliefBase:
     def order_eval(self, order):
         while order>1 or order<=0:
             print("Invalid Order! Please choose an order between zero and 1 (0, 1]:")
-            order = input(PROMPT)
+            order = float(input(PROMPT))
         return order
     
 

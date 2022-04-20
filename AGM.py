@@ -59,6 +59,7 @@ class AGM:
     
     ### Gain New Information - Revision + Contraction
     def Revision (self, belief):
+        new_inf_check = 0
         frm = belief.formula
         order = belief.order
         neg_frm = self.Negation(frm)
@@ -72,15 +73,17 @@ class AGM:
             for i in range(Len_belief_set):
                 b = self.belief_base.belief_set[i]
                 if b.formula in contractions: 
-                    if b.order < order:
+                    new_inf_check += 1
+                    if b.order < order:  
                         self.belief_base.remove_belief(b)
                         self.Expansion(belief)
-                else:
-                    self.Expansion(belief)
+                        
+            if new_inf_check == 0:
+                self.Expansion(belief)
         else:
             self.Expansion(belief)
         return self.belief_base.belief_set
-    
+       
 
 
         ### Gain New Information - Expansion
@@ -118,5 +121,4 @@ def output(belief_set):
 if __name__ == "__main__":
     agm = AGM()
     Belief_Set = agm.update_BS()
-    #Belief_Set = agm.Review(agm.belief_base.belief_set)
     print("Belief_Set update : ", output(agm.belief_base.belief_set))
