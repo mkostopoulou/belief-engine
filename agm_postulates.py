@@ -2,7 +2,9 @@ import random
 from sympy import *
 from belief import Belief
 from belief_base import BeliefBase
+from postulates_of_revision import PostulatesOfRevision
 
+rev_post = PostulatesOfRevision()
 class Postulates:
     def __init__(self):
         # Sort by decreasing order
@@ -27,16 +29,17 @@ class Postulates:
         self.print_base()
 
     # example type: p
-    def add_belief(self, str_formula: str):
-        if not str_formula == None :
-            print("Old belief base :")
-            self.print_base()
-            # [0.0, 1.0)
-            order = random.random()
-            formula = to_cnf(str_formula)
-            self.bb.add(Belief(formula, order))
-            print("New belief base :")
-        self.print_base()
+    def request_belief(self):
+        while True:
+            print("Type a belief for postulate check")
+            belief_input = input(PROMPT) or None
+            if not belief_input == None:
+                break
+
+        # [0.0, 1.0)
+        order = random.random()
+        formula = to_cnf(belief_input)
+        return Belief(formula, order)
 
     def reset_base(self):
         self.bb.belief_base = []
@@ -46,22 +49,29 @@ class Postulates:
         print('Belief base : ', bb_output)
 
     def closure(self):
-        return True
+        belief = self.request_belief()
+        return rev_post.closure(self.bb.belief_base, belief)
 
     def success(self):
-        return True
+        belief = self.request_belief()
+        return rev_post.success(self.bb.belief_base, belief)
 
     def inclusion(self):
-        return True
+        belief = self.request_belief()
+        return rev_post.inclusion(self.bb.belief_base, belief)
 
     def vacuity(self):
-        return True
+        belief = self.request_belief()
+        return rev_post.vacuity(self.bb.belief_base, belief)
 
     def consistency(self):
-        return True
+        belief = self.request_belief()
+        return rev_post.consistency(self.bb.belief_base, belief)
 
     def extensionality(self):
-        return True
+        belief1 = self.request_belief()
+        belief2 = self.request_belief()
+        return rev_post.extensionality(self.bb.belief_base, belief1, belief2)
 
     def check_postulate(self, postulate):
         if postulate == '1':
@@ -94,12 +104,12 @@ def output(bb, withOrder = False):
 POSTULATES = [
     'POSTULATES',
     100*"-",
-    'Closure : 1',
-    'Success : 2',
-    'Inclusion: 3',
-    'Vacuity : 4',
-    'Consistency : 5',
-    'Extensionality : 6',
+    '1 : Closure',
+    '2 : Success',
+    '3 : Inclusion',
+    '4 : Vacuity',
+    '5 : Consistency',
+    '6 : Extensionality',
 ]
 def request_postulate(postulates: Postulates):
     print('Select which postulate to check:')
@@ -125,12 +135,12 @@ def request_postulate(postulates: Postulates):
 ACTIONS = [
     'ACTIONS',
     100*"-",
-    'Set belief base : 1',
-    'Reset belief base : 2',
-    'Add one belief to belief base: 3',
-    'Print belief base : 4',
-    'Revise belief base : 5',
-    'Check AGM postulates : 6',
+    '1 : Set belief base',
+    '2 : Reset belief base',
+    # '3 : Add one belief to belief base',
+    '3 : Print belief base',
+    '4 : Revise belief base',
+    '5 : Check AGM postulates',
 ]
 def request_action(postulates: Postulates):
     print('Select action:')
@@ -165,11 +175,11 @@ def handle_action(postulates: Postulates, action):
     elif action == '2':
         print('resetting base...')
         postulates.reset_base()
-    elif action == '3':
-        print("Type belief :")
-        b_input = input(PROMPT) or None
-        print('adding belief...')
-        postulates.add_belief(b_input)
+    # elif action == '3':
+    #     print("Type belief :")
+    #     b_input = input(PROMPT) or None
+    #     print('adding belief...')
+    #     postulates.add_belief(b_input)
     elif action == '4':
         print('printing base...')
         postulates.print_base(True)
