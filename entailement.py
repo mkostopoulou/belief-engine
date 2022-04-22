@@ -29,47 +29,60 @@ class Resolution:
         repeat = True
         clauses_to_be_resolved = clauses
         while repeat:
-            previous = clauses_to_be_resolved
-            # unique combinations of clauses
-            pairs = itertools.combinations(clauses_to_be_resolved, 2)
-            list_pairs = list(pairs)
-            print("clauses_to_be_resolved: ", clauses_to_be_resolved)
-
-            # compare literals of all pairs
+            previous = clauses_to_be_resolved             
+            list_pairs = self.pair_maker(clauses_to_be_resolved)
             repeat = False
             clauses_to_be_resolved = []
             for clause1, clause2 in list_pairs:
-                c1_literals = self.agm.Belief_sub(clause1)
-                c2_literals = self.agm.Belief_sub(clause2)
-                print(" c1_literals: ", c1_literals)
-                print(" c2_literals: ", c2_literals)
-                for literal_c1 in c1_literals:
-                    for literal_c2 in c2_literals:
-                        # check for complementary literals
-                        if literal_c1 == ~literal_c2 or literal_c2 == ~literal_c1:
-                            # every time we produce a new clause we will start resolving again
-                            # until no new clause is created or the set is empty
-                            repeat = True
-
-                            # remove literal_c1 from clause1 and literal_c2 from clause2
-                            c1_literals.remove(literal_c1)
-                            c2_literals.remove(literal_c2)
-
-                            # combine left overs in one new clause
-                            left_overs = list(set(c1_literals + c2_literals))
-                            print(" left_overs: ", left_overs)
-                            if len(left_overs)>0:
-                                c = Or(*tuple(left_overs))
+                left_overs, rerun = self.resolve_complementary(clause1, clause2)
+                
+                while rerun>0:
+                    list_pairs = self.pair_maker(left_overs)
+                    for clause1, clause2 in list_pairs:
+                        left_overs, rerun = self.resolve_complementary(clause1, clause2)
+                    
+                
+                
+                if len(left_overs)>0:
+                        c = Or(*tuple(left_overs))
                 if c not in clauses_to_be_resolved:
-                    print("  add: ", c)
                     clauses_to_be_resolved.append(c)
-                print("")
             # Check if no new clause has been added to the KB
             if previous == clauses_to_be_resolved:
                 return False
         isEmptyClause = not len(clauses_to_be_resolved) > 0
         # sys.exit()
         return isEmptyClause
+    
+    def resolve_complementary (self, clause1, clause2):
+        rerun = 0
+        left_overs = []
+        c1_literals = self.agm.Belief_sub(to_cnf(clause1))
+        c2_literals = self.agm.Belief_sub(to_cnf(clause2))
+        for literal_c1 in c1_literals:
+            for literal_c2 in c2_literals:
+                if literal_c1 == ~literal_c2 or literal_c2 == ~literal_c1:
+                    repeat = True
+
+                    c1_literals.remove(literal_c1)
+                    c2_literals.remove(literal_c2)
+
+                    left_overs = list(set(c1_literals + c2_literals))
+                    
+        for i in left_overs:
+            if ~(i) in left_overs:
+                rerun = 1
+                    
+        return left_overs, rerun
+    
+    def pair_maker (self, clauses):
+        # unique combinations of clauses
+        pairs = itertools.combinations(clauses, 2)
+        list_pairs = list(pairs)
+        print("clauses_to_be_resolved: ", clauses)
+        return list_pairs
+        
+        
 
 
 if __name__ == "__main__":
