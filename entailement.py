@@ -34,17 +34,12 @@ class Resolution:
             pairs = itertools.combinations(clauses_to_be_resolved, 2)
             list_pairs = list(pairs)
             print("clauses_to_be_resolved: ", clauses_to_be_resolved)
-            print("")
 
             # compare literals of all pairs
             repeat = False
             clauses_to_be_resolved = []
             for clause1, clause2 in list_pairs:
-                #c1_literals = list(clause1.args)
-                print("clause1: ", clause1)
                 c1_literals = self.agm.Belief_sub(clause1)
-                #c2_literals = list(clause2.args)
-                print("clause2: ", clause2)
                 c2_literals = self.agm.Belief_sub(clause2)
                 print(" c1_literals: ", c1_literals)
                 print(" c2_literals: ", c2_literals)
@@ -63,10 +58,12 @@ class Resolution:
                             # combine left overs in one new clause
                             left_overs = list(set(c1_literals + c2_literals))
                             print(" left_overs: ", left_overs)
-                            c = Or(*tuple(left_overs))
-                            if c not in clauses_to_be_resolved:
-                                clauses_to_be_resolved.append(c)
-                print(" ")
+                            if len(left_overs)>0:
+                                c = Or(*tuple(left_overs))
+                if c not in clauses_to_be_resolved:
+                    print("  add: ", c)
+                    clauses_to_be_resolved.append(c)
+                print("")
             # Check if no new clause has been added to the KB
             if previous == clauses_to_be_resolved:
                 return False
@@ -82,7 +79,7 @@ if __name__ == "__main__":
     print(Belief_Set)
 
     # example from ex9 1.
-    Belief_Set = res.check_entailment(['~p >> q', 'q >> p', 'p >> r', 'r & s'], 'p & r & s')
-    print(Belief_Set)
+    #Belief_Set = res.check_entailment(['~p >> q', 'q >> p', 'p >> r', 'r & s'], 'p & r & s')
+    #print(Belief_Set)
 
     # print("Belief_Set  : ", output(agm.belief_base.belief_set))
