@@ -7,6 +7,7 @@ class BeliefBase:
     def __init__(self):
         # Sort by decreasing order
         self.belief_set = []
+        self.belief_base = []
         self.belief_order = {}
 
 
@@ -43,5 +44,9 @@ class BeliefBase:
         for i in self.belief_set:
             if belief.formula == i.formula:
                 self.belief_set.remove(belief)
+        return self.belief_set
+
+    def add(self, belief):
+        self.belief_base.append(belief)
         return self.belief_set
 
