@@ -31,6 +31,7 @@ class AGM:
     
     ### Check Subsets of a Belief
     def Belief_sub (self, frm):
+        frm = to_cnf(frm)
         porpositions = ["|", "&", "(", ")"]
         imp = ['>>', '<<']
         str_frm = str(frm)
