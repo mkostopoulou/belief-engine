@@ -1,19 +1,19 @@
 import random
 from sympy import *
+from AGM import AGM
 from belief import Belief
 from belief_base import BeliefBase
 
 class PostulatesOfRevision:
-    def __init__(self):
-        # Sort by decreasing order
-        self.bb = BeliefBase()
-
     # B ∗ φ = Cn(B ∗ φ)
     def closure(self, B: BeliefBase, b: Belief):
         f = b.formula
 
         # Do revision
-        rev_B = []  # B ∗ φ
+        agm_engine = AGM(B)
+        rev_B = agm_engine.Revision(b)  # B ∗ φ
+
+        # produce base set Cn(rev_B)
 
         # check if f is not present in both rev_B and Cn(rev_B)
 
@@ -61,9 +61,11 @@ class PostulatesOfRevision:
 
         return True
 
+    # KB ∧ ¬φ
     # B ∗ φ is consistent if φ is consistent
     # A consistent set of sentences is a set all of which can be true together
     def consistency(self, B: BeliefBase, b: Belief):
+        # KB ∧ ¬φ or DPLL
         return True
 
     # If (φ ↔ ψ) ∈ Cn(∅), then B ∗ φ = B ∗ ψ

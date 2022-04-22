@@ -10,12 +10,13 @@ class Postulates:
         # Sort by decreasing order
         self.bb = BeliefBase()
 
-    # example type: ~r | p | s & ~p | r & ~s | r
+    # example type: ~r | p | s , ~p | r , ~s | r
+    # example type: ~p >> q, q >> p, p >> r, r & s
     def set_base(self, str_base: str):
         if not str_base == None:
             print("Old belief base :")
             self.print_base()
-            formulas = str_base.split('&')
+            formulas = str_base.split(',')
             new_base = []
             for f in formulas:
                 # [0.0, 1.0)
@@ -137,10 +138,11 @@ ACTIONS = [
     100*"-",
     '1 : Set belief base',
     '2 : Reset belief base',
-    # '3 : Add one belief to belief base',
     '3 : Print belief base',
     '4 : Revise belief base',
     '5 : Check AGM postulates',
+    # '6 : Check belief follows Belief Base',
+    # '7 : Add belief to belief base',
 ]
 def request_action(postulates: Postulates):
     print('Select action:')
@@ -180,12 +182,12 @@ def handle_action(postulates: Postulates, action):
     #     b_input = input(PROMPT) or None
     #     print('adding belief...')
     #     postulates.add_belief(b_input)
-    elif action == '4':
+    elif action == '3':
         print('printing base...')
         postulates.print_base(True)
-    elif action == '5':
+    elif action == '4':
         print('revising base... (TBA)')
-    elif action == '6':
+    elif action == '5':
         request_postulate(postulates)
 
 PROMPT = ">>> "

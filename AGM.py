@@ -5,9 +5,9 @@ from belief import Belief
 PROMPT = ">>> "
 
 class AGM:
-    def __init__(self):
+    def __init__(self, belief_base):
         # Sort by decreasing order
-        self.belief_base = BeliefBase()
+        self.belief_base = belief_base
 
     ### Connectives
     def Negation (self, frm):
@@ -122,6 +122,6 @@ def output(belief_set):
 
 
 if __name__ == "__main__":
-    agm = AGM()
+    agm = AGM(BeliefBase())
     Belief_Set = agm.update_BS()
     print("Belief_Set update : ", output(agm.belief_base.belief_set))
