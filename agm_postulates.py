@@ -3,7 +3,6 @@ from sympy import *
 from belief import Belief
 from belief_base import BeliefBase
 
-
 class Postulates:
     def __init__(self):
         # Sort by decreasing order
@@ -46,6 +45,38 @@ class Postulates:
         bb_output = output(self.bb.belief_base, withOrder)
         print('Belief base : ', bb_output)
 
+    def closure(self):
+        return True
+
+    def success(self):
+        return True
+
+    def inclusion(self):
+        return True
+
+    def vacuity(self):
+        return True
+
+    def consistency(self):
+        return True
+
+    def extensionality(self):
+        return True
+
+    def check_postulate(self, postulate):
+        if postulate == '1':
+            return "Closure is {0}".format('satisfied' if self.closure() else 'not satisfied')
+        elif postulate == '2':
+            return "Success is {0}".format('satisfied' if self.success() else 'not satisfied')
+        elif postulate == '3':
+            return "Inclusion is {0}".format('satisfied' if self.inclusion() else 'not satisfied')
+        elif postulate == '4':
+            return "Vacuity is {0}".format('satisfied' if self.vacuity() else 'not satisfied')
+        elif postulate == '5':
+            return "Consistency is {0}".format('satisfied' if self.consistency() else 'not satisfied')
+        elif postulate == '6':
+            return "Extensionality is {0}".format('satisfied' if self.extensionality() else 'not satisfied')
+
 
 def output(bb, withOrder = False):
     if withOrder:
@@ -59,8 +90,72 @@ def output(bb, withOrder = False):
 
     return beliefs
 
+
+POSTULATES = [
+    'POSTULATES',
+    100*"-",
+    'Closure : 1',
+    'Success : 2',
+    'Inclusion: 3',
+    'Vacuity : 4',
+    'Consistency : 5',
+    'Extensionality : 6',
+]
+def request_postulate(postulates: Postulates):
+    print('Select which postulate to check:')
+    while True:
+        print(100 * "=")
+        # Request action
+        for p in POSTULATES:
+            print(p)
+        postulate_input = input(PROMPT)
+        if int(postulate_input) not in range(1, len(POSTULATES)-1):
+            print('* Chose an available postulate! *')
+            continue
+        else:
+            print(postulates.check_postulate(postulate_input))
+
+        # Request termination
+        print("Do you want to check more postulates? : Type 'n' (stop) | Press Enter (continue)")
+        continue_input = input(PROMPT) or 'y'
+        if continue_input != 'y':
+            break
+
+
+ACTIONS = [
+    'ACTIONS',
+    100*"-",
+    'Set belief base : 1',
+    'Reset belief base : 2',
+    'Add one belief to belief base: 3',
+    'Print belief base : 4',
+    'Revise belief base : 5',
+    'Check AGM postulates : 6',
+]
+def request_action(postulates: Postulates):
+    print('Select action:')
+    while True:
+        print(100 * "=")
+
+        # Request action
+        for a in ACTIONS:
+            print(a)
+        action_input = input(PROMPT)
+        if int(action_input) not in range(1, len(ACTIONS) - 1):
+            print('* Chose an available action! *')
+            continue
+
+        # ...
+        handle_action(postulates, action_input)
+
+        # Request termination
+        print("Do you want to perform more actions? : Type 'n' (stop) | Press Enter (continue)")
+        continue_input = input(PROMPT) or 'y'
+        if continue_input != 'y':
+            break
+
+
 def handle_action(postulates: Postulates, action):
-    failed = False
     print(100 * "_")
     if action == '1':
         print("Type belief base :")
@@ -80,39 +175,14 @@ def handle_action(postulates: Postulates, action):
         postulates.print_base(True)
     elif action == '5':
         print('revising base... (TBA)')
-    else:
-        print('* Chose an available action! *')
-        failed = True
-    print(100 * "_")
-    return failed
+    elif action == '6':
+        request_postulate(postulates)
 
-# Global variables
 PROMPT = ">>> "
-ACTIONS = [
-    'ACTIONS',
-    100*"-",
-    'Set belief base : 1',
-    'Reset belief base : 2',
-    'Add one belief to belief base: 3',
-    'Print belief base : 4',
-    'Revise belief base : 5'
-]
 p = Postulates()
 if __name__ == "__main__":
-    while True:
-        print(100*"=")
+    # Request action
+    request_action(p)
 
-        # Request action
-        for a in ACTIONS:
-            print(a)
-        action_input = input(PROMPT)
-
-        # ...
-        failed = handle_action(p, action_input)
-
-        # Request termination
-        if not failed:
-            print("Do you want to perform more actions? : Type 'n' (stop) | Press Enter (continue)")
-            continue_input = input(PROMPT) or 'y'
-            if continue_input != 'y':
-                break
+    print(100 * "=")
+    print("PROCESS TERMINATED")
