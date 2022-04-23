@@ -6,8 +6,8 @@ import numpy as np
 
 
 class BeliefBase:
-    def __init__(self) -> None:
-        self.beliefs = []
+    def __init__(self, beliefs=[]) -> None:
+        self.beliefs = beliefs
 
     def add_belief(self, sentence, confidence: float):
         cnf_sentence = to_cnf(sentence)
@@ -47,7 +47,6 @@ class BeliefBase:
         entailments = []
         for subset in all_combinations:
             entailments.append(pl_resolution([belief for belief in subset], formula))
-
         remainders = [
             set(x) for i, x in enumerate(all_combinations) if not entailments[i]
         ]
