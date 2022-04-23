@@ -1,6 +1,6 @@
 from sympy import Not
 from sympy.logic.boolalg import to_cnf
-from resolution import pl_resolution
+from .resolution import pl_resolution
 from itertools import combinations
 import numpy as np
 
