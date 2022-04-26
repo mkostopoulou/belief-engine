@@ -5,7 +5,7 @@ from itertools import combinations
 from .utils import associate, disjuncts, conjuncts
 
 
-def pl_resolution(beliefs, formula, verbose: bool = False):
+def pl_resolution(beliefs: list, formula, verbose: bool = False):
     """
     Take a `BeliefBase` and check if a `formula` follows from it.
 
