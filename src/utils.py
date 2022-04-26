@@ -52,7 +52,7 @@ def dissociate(op, args):
     collect(args)
     return result
 
-
+# This function is here thanks to Gauss. 
 def arithmetic_series(start, stop, step):
     if stop == 1:
         return 1
