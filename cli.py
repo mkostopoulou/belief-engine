@@ -6,19 +6,19 @@ engine = BeliefBase()
 PROMPT = ">>> "
 
 ACTIONS = [
-    'ACTIONS',
-    100*"-",
-    '1 : Add belief to belief base',
-    '2 : Check if a given belief follows the belief base',
-    '3 : Check contraction of the belief base with a belief',
-    '4 : Print belief base',
-    '5 : Reset belief base',
-    '6 : Quit'
+    "ACTIONS",
+    100 * "-",
+    "1 : Add belief to belief base",
+    "2 : Check if a given belief follows the belief base",
+    "3 : Check contraction of the belief base with a belief",
+    "4 : Print belief base",
+    "5 : Reset belief base",
+    "6 : Quit",
 ]
 
 
 def request_action(engine: BeliefBase):
-    print('Select action:')
+    print("Select action:")
     while True:
         print(100 * "=")
 
@@ -27,7 +27,7 @@ def request_action(engine: BeliefBase):
             print(a)
         action_input = input(PROMPT)
         if int(action_input) not in range(1, len(ACTIONS) - 1):
-            print('* Chose an available action! *')
+            print("* Chose an available action! *")
             continue
 
         # ...
@@ -36,37 +36,36 @@ def request_action(engine: BeliefBase):
 
 def handle_action(engine: BeliefBase, action):
     print(100 * "_")
-    if action == '1':
+    if action == "1":
         formula_input = request_formula()
         confidence_input = request_confidence()
-        print('Adding new belief...')
+        print("Adding new belief...")
         engine.add_belief(formula_input, confidence_input)
         print(engine)
-    elif action == '2':
+    elif action == "2":
         if not base_exists(engine.beliefs):
             return
         formula_input = to_cnf(request_formula())
-        print('Checking entailment...')
+        print("Checking entailment...")
         if engine.entails(engine.beliefs, formula_input):
             print(f"{formula_input} entails from the current belief base!")
         else:
             print(f"{formula_input} does not entail from the current belief base!")
-    elif action == '3':
+    elif action == "3":
         if not base_exists(engine.beliefs):
             return
         formula_input = to_cnf(request_formula())
         print(f"Contracting with formula {formula_input}...")
         base = engine.contract(engine.beliefs, formula_input)
-        print(
-            f'The result of contraction would be a belief base consisting of {base}')
-    elif action == '4':
+        print(f"The result of contraction would be a belief base consisting of {base}")
+    elif action == "4":
         if not base_exists(engine.beliefs):
             return
         print(f"Belief Base consists of {engine}")
-    elif action == '5':
+    elif action == "5":
         engine.beliefs = []
         print(f"Belief Base consists of {engine}")
-    elif action == '6':
+    elif action == "6":
         print("Thanks, Bye!")
         exit()
 
@@ -78,6 +77,7 @@ def request_formula():
         formula_input = input(PROMPT) or None
     return formula_input
 
+
 def request_confidence():
     confidence_input = None
     while confidence_input is None:
@@ -85,11 +85,13 @@ def request_confidence():
         confidence_input = float(input(PROMPT)) or None
     return confidence_input
 
+
 def base_exists(beliefs):
     if not len(beliefs) > 0:
         print("No belief base found. Set up belief(s) first.")
         return False
     return True
+
 
 if __name__ == "__main__":
     # Request action

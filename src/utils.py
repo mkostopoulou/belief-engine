@@ -51,3 +51,11 @@ def dissociate(op, args):
 
     collect(args)
     return result
+
+
+def arithmetic_series(start, stop, step):
+    if stop == 1:
+        return 1
+    number_of_terms = (stop - start) // step
+    sum_of_extrema = start + (stop - step)
+    return number_of_terms * sum_of_extrema // 2

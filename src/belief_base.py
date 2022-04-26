@@ -1,6 +1,7 @@
 from sympy import Not
 from sympy.logic.boolalg import to_cnf
-from .resolution import pl_resolution
+from utils import arithmetic_series
+from resolution import pl_resolution
 from itertools import combinations
 import numpy as np
 
@@ -8,13 +9,23 @@ import numpy as np
 class BeliefBase:
     def __init__(self, beliefs=[]) -> None:
         self.beliefs = beliefs
+        self.max_rank = len(self.beliefs)
 
-    def add_belief(self, sentence, confidence: float):
+    def add_belief(self, sentence, confidence: float = None):
+
         cnf_sentence = to_cnf(sentence)
 
-        print(f"\n >> Adding {sentence} and converted to CNF: {cnf_sentence}")
+        print(f"\n >> Adding: {sentence} | with CNF form: {cnf_sentence}")
 
-        self.beliefs = self.revise(self.beliefs, cnf_sentence, confidence)
+        if confidence is not None:
+            self.beliefs = self.revise(self.beliefs, cnf_sentence, confidence)
+        else:
+            new_beliefs = self.revise(self.beliefs, cnf_sentence, confidence)
+            new_beliefs.sort(key=lambda x: x.rank)
+            self.beliefs = [
+                RankedBelief(x.sentence, i + 1) for i, x in enumerate(new_beliefs)
+            ]
+            self.max_rank = len(self.beliefs)
 
     def __repr__(self) -> str:
         return "\n".join(str(x) for x in self.beliefs)
@@ -61,29 +72,46 @@ class BeliefBase:
 
         return out
 
-    def contract(self, base, formula):
+    def contract(self, base, formula, selection_function):
         remainders = self.remainders(base, formula)
 
         if len(remainders) > 0:
-
-            scores = []
-
-            for element in remainders:
-                confidences = [x.confidence for x in element]
-                scores.append(np.mean(confidences))
-
-            return list(remainders[scores.index(max(scores))])
+            return selection_function(remainders)
         else:
             return []
 
+    def confidence_selection_function(self, remainders):
+        scores = []
+
+        for element in remainders:
+            confidences = [x.confidence for x in element]
+            scores.append(np.mean(confidences))
+
+        return list(remainders[scores.index(max(scores))])
+
+    def ranked_selection_function(self, remainders):
+        scores = []
+        denominator = arithmetic_series(0, self.max_rank, 1)
+        for element in remainders:
+            confidences = [int(self.max_rank - x.rank) for x in element]
+            scores.append(sum(confidences) / denominator)
+
+        return list(remainders[scores.index(max(scores))])
+
     def expand(self, base, formula, confidence):
-        base.append(Belief(formula, confidence))
+
+        if confidence is not None:
+            base.append(ConfidenceBelief(formula, confidence))
+        else:
+            base.append(RankedBelief(formula, self.max_rank + 1))
+            self.max_rank += 1
+
         return base
 
-    def revise(self, base, formula, confidence):
+    def revise(self, base, formula, confidence: float = None):
 
         if pl_resolution([], formula):
-            confidence = 1.0
+            confidence = 1.0 if confidence is not None else None
             print(f"{formula} is a tautology")
 
         if pl_resolution([], Not(formula)) or self.check_if_already_there(
@@ -93,37 +121,75 @@ class BeliefBase:
         else:
             neg_formula = Not(formula)
 
-            base = self.contract(base, neg_formula)
+            if confidence is not None:
+                base = self.contract(
+                    base, neg_formula, self.confidence_selection_function
+                )
+            else:
+                base = self.contract(base, neg_formula, self.ranked_selection_function)
+
             base = self.expand(base, formula, confidence)
 
             return base
 
 
 class Belief:
-    def __init__(self, sentence, confidence: float) -> None:
+    def __init__(self, sentence: str) -> None:
         self.sentence = sentence
+
+
+class RankedBelief(Belief):
+    def __init__(self, sentence: str, rank: int) -> None:
+        super().__init__(sentence)
+        self.rank = rank
+
+    def __repr__(self) -> str:
+        return f"\nBelief: {self.sentence} with rank:{self.rank}."
+
+
+class ConfidenceBelief(Belief):
+    def __init__(self, sentence: str, confidence: float) -> None:
+        super().__init__(sentence)
         self.confidence = confidence
 
     def __repr__(self) -> str:
-        return f"Belief: {self.sentence} with confidence:{self.confidence}"
+        return f"\nBelief: {self.sentence} with confidence:{self.confidence}."
 
 
 if __name__ == "__main__":
-    test = BeliefBase()
+    test_confidence = BeliefBase()
 
-    test.add_belief("p", 0.8)
-    print(f">>>1\n {test}")
-    test.add_belief("q", 0.5)
-    print(f">>>2\n {test}")
-    test.add_belief("p & q", 0.1)
-    print(f">>>3\n {test}")
-    test.add_belief("p | q", 0.9)
-    print(f">>>4\n {test}")
-    test.add_belief("p >> q", 0.75)
-    print(f">>>5\n {test}")
-    test.add_belief("~q", 0.96)
-    print(f">>>6\n {test}")
-    test.add_belief("~s | s", 0.96)
-    print(f">>>7\n {test}")
-    test.add_belief("~s & s", 0.96)
-    print(f">>>8\n {test}")
+    test_confidence.add_belief("p", 0.8)
+    print(f">>>1\n {test_confidence}")
+    test_confidence.add_belief("q", 0.5)
+    print(f">>>2\n {test_confidence}")
+    test_confidence.add_belief("p & q", 0.1)
+    print(f">>>3\n {test_confidence}")
+    test_confidence.add_belief("p | q", 0.9)
+    print(f">>>4\n {test_confidence}")
+    test_confidence.add_belief("p >> q", 0.75)
+    print(f">>>5\n {test_confidence}")
+    test_confidence.add_belief("~q", 0.96)
+    print(f">>>6\n {test_confidence}")
+    test_confidence.add_belief("~s | s", 0.96)
+    print(f">>>7\n {test_confidence}")
+    test_confidence.add_belief("~s & s", 0.96)
+    print(f">>>8\n {test_confidence}")
+
+    test_rank = BeliefBase()
+    test_rank.add_belief("p")
+    print(f">>>1\n {test_rank}")
+    test_rank.add_belief("q")
+    print(f">>>2\n {test_rank}")
+    test_rank.add_belief("p & q")
+    print(f">>>3\n {test_rank}")
+    test_rank.add_belief("p | q")
+    print(f">>>4\n {test_rank}")
+    test_rank.add_belief("p >> q")
+    print(f">>>5\n {test_rank}")
+    test_rank.add_belief("~q")
+    print(f">>>6\n {test_rank}")
+    test_rank.add_belief("~s | s")
+    print(f">>>7\n {test_rank}")
+    test_rank.add_belief("~s & s")
+    print(f">>>8\n {test_rank}")
