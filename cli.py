@@ -1,7 +1,19 @@
-from src.belief_base import BeliefBase
 from sympy import *
 
-engine = BeliefBase()
+from src.belief_base import BeliefBase
+from argparse import ArgumentParser
+from argparse import BooleanOptionalAction
+def get_args():
+    parser = ArgumentParser(description="Evaluation argument parser")
+
+    parser.add_argument(
+        "--confidence",
+        help="Value function to use: rank/confidence",
+        default= False,
+        action=BooleanOptionalAction,
+    )
+
+    return parser.parse_args()
 
 PROMPT = ">>> "
 
@@ -17,7 +29,7 @@ ACTIONS = [
 ]
 
 
-def request_action(engine: BeliefBase):
+def request_action(engine: BeliefBase, confidence:bool = False):
     print("Select action:")
     while True:
         print(100 * "=")
@@ -31,14 +43,17 @@ def request_action(engine: BeliefBase):
             continue
 
         # ...
-        handle_action(engine, action_input)
+        handle_action(engine, action_input, confidence)
 
 
-def handle_action(engine: BeliefBase, action):
+def handle_action(engine: BeliefBase, action, confidence:bool = False):
     print(100 * "_")
     if action == "1":
         formula_input = request_formula()
-        confidence_input = request_confidence()
+        if confidence:
+            confidence_input = request_confidence()
+        else:
+            confidence_input = None
         print("Adding new belief...")
         engine.add_belief(formula_input, confidence_input)
         print(engine)
@@ -94,8 +109,11 @@ def base_exists(beliefs):
 
 
 if __name__ == "__main__":
-    # Request action
-    request_action(engine)
+    args = get_args()
+
+    engine = BeliefBase()
+
+    request_action(engine, args.confidence)
 
     print(100 * "=")
     print("PROCESS TERMINATED")

@@ -1,7 +1,7 @@
 from sympy import Not
 from sympy.logic.boolalg import to_cnf
-from utils import arithmetic_series
-from resolution import pl_resolution
+from .utils import arithmetic_series
+from .resolution import pl_resolution
 from itertools import combinations
 import numpy as np
 
@@ -10,14 +10,18 @@ class BeliefBase:
     def __init__(self, beliefs=[]) -> None:
         self.beliefs = beliefs
         self.max_rank = len(self.beliefs)
+        self.confidence = False
 
     def add_belief(self, sentence, confidence: float = None):
+        if len(self.beliefs)>0:
+            assert(self.confidence == (confidence is not None)), "You should either use rank-based valuation function or confidence based. Not both."
 
         cnf_sentence = to_cnf(sentence)
 
         print(f"\n >> Adding: {sentence} | with CNF form: {cnf_sentence}")
 
         if confidence is not None:
+            self.confidence = True
             self.beliefs = self.revise(self.beliefs, cnf_sentence, confidence)
         else:
             new_beliefs = self.revise(self.beliefs, cnf_sentence, confidence)
