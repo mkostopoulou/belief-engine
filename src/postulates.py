@@ -1,4 +1,4 @@
-from sympy import to_cnf
+from sympy import to_cnf, Not
 from belief_base import Belief, BeliefBase
 from resolution import pl_resolution
 from itertools import combinations
@@ -69,6 +69,41 @@ def uniformity(base, p, q):
     return (q_follows == p_follows) and (
         BeliefBase().contract(base, p) == BeliefBase().contract(base, q)
     )
+
+
+def consistency(base, p):
+    p = to_cnf(p)
+
+    if pl_resolution([],Not(p)):
+        print("p is a contradiction")
+        return False
+
+    if pl_resolution(base, to_cnf("b")):
+        print("There is a contradiction in the belief base")
+
+        test_base = BeliefBase(base)
+        new_base = test_base.revise(base,p)
+
+        print("Something wrong is going to happen here")
+        return False
+    
+    return True
+    
+
+
+def vacuity(base, p):
+    p = to_cnf(p)
+    notp = Not(p)
+
+    if not pl_resolution(base, notp):
+        revised = base.append(p)
+    
+    revised_auto = BeliefBase.revise(base, p)
+
+    return revised == revised_auto
+
+def extensionality(base,p):
+    pass
 
 
 if __name__ == "__main__":
