@@ -1,8 +1,7 @@
-from asyncio import base_events
 from copy import deepcopy
 from sympy import to_cnf, Not
-from belief_base import RankedBelief, BeliefBase
-from resolution import pl_resolution
+from .belief_base import RankedBelief, BeliefBase
+from .resolution import pl_resolution
 from itertools import combinations
 from numpy import array
 
