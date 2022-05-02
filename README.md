@@ -26,14 +26,14 @@ python src/cli.py
 
 ### How to run tests
 
-**Postulates**
+**Postulates:**
 
 Tests the success, inclusion, relevance, uniformity, vacuity and consistency postulates.
 ```{bash}
 python src/postulates.py  
 ```
 
-**Pretyped belief base tests**
+**Pretyped belief base tests:**
 
 Tests the belief revision engine by sequentially adding a series of beliefs to the belief base.
 Tests are run using both the gamma_o (rank-based) and gamma_c (confidence-based) selection functions.
