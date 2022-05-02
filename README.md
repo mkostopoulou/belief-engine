@@ -10,13 +10,13 @@ The client will allow the user to:
 5) Resetting the belief base
 
 
-**With confidence**
+**With confidence (ordering of beliefs is based on the confidence value specified by the user)**
 
 ```{bash}
 python src/cli.py --confidence   
 ```
 
-**Without confidence**
+**Without confidence (ordering of beliefs is based on the gamma_o-function explained in the report)**
 
 ```{bash}
 python src/cli.py
@@ -25,11 +25,14 @@ python src/cli.py
 ### How to run tests
 
 **Postulates**
+Tests the success, inclusion, relevance, uniformity, vacuity and consistency postulates.
 ```{bash}
 python src/postulates.py  
 ```
 
 **Pretyped belief base tests**
+Tests the belief revision engine by sequentially adding a series of beliefs to the belief base.
+Tests are run using both the gamma_o (rank-based) and gamma_c (confidence-based) selection functions.
 ```{bash}
 python src/belief_base.py  
 ```
