@@ -7,13 +7,25 @@
 **With confidence**
 
 ```{bash}
-python cli.py --confidence   
+python src/cli.py --confidence   
 ```
 
 **Without confidence**
 
 ```{bash}
-python cli.py
+python src/cli.py
+```
+
+### How to run tests
+
+**Postulates**
+```{bash}
+python src/postulates.py  
+```
+
+**Pretyped belief base tests**
+```{bash}
+python src/belief_base.py  
 ```
 
 ```

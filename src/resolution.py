@@ -2,7 +2,7 @@ from typing import Tuple
 from sympy.logic.boolalg import to_cnf
 from sympy import Not, Or
 from itertools import combinations
-from .utils import associate, disjuncts, conjuncts
+from utils import associate, disjuncts, conjuncts
 
 
 def pl_resolution(beliefs: list, formula, verbose: bool = False):

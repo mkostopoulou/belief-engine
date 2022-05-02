@@ -1,6 +1,6 @@
 from sympy import *
 
-from src.belief_base import BeliefBase
+from belief_base import BeliefBase
 from argparse import ArgumentParser
 from argparse import BooleanOptionalAction
 def get_args():

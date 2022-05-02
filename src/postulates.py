@@ -1,7 +1,7 @@
 from copy import deepcopy
 from sympy import to_cnf, Not
-from .belief_base import RankedBelief, BeliefBase
-from .resolution import pl_resolution
+from belief_base import RankedBelief, BeliefBase
+from resolution import pl_resolution
 from itertools import combinations
 from numpy import array
 
@@ -107,9 +107,20 @@ def vacuity(base, p):
 
 
 if __name__ == "__main__":
+    print('Test of Succes postulate')
     print(success(TEST_BELIEF_BASE, "q"))
+    print('--------------------------------------')
+    print('Test of Inclusion postulate')
     print(inclusion(TEST_BELIEF_BASE, "o"))
+    print('--------------------------------------')
+    print('Test of Relevance postulate')
     print(relevance(TEST_BELIEF_BASE, "p", "p & q"))
+    print('--------------------------------------')
+    print('Test of Uniformity postulate')
     print(uniformity(TEST_BELIEF_BASE_UN, "p", "q"))
+    print('--------------------------------------')
+    print('Test of Vacuity postulate')
     print(vacuity(TEST_BELIEF_BASE, "s"))
+    print('--------------------------------------')
+    print('Test of Consistency postulate')
     print(consistency(TEST_BELIEF_BASE))

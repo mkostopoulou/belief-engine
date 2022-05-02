@@ -1,7 +1,7 @@
 from sympy import Not
 from sympy.logic.boolalg import to_cnf
-from .utils import arithmetic_series
-from .resolution import pl_resolution
+from utils import arithmetic_series
+from resolution import pl_resolution
 from itertools import combinations
 import numpy as np
 
@@ -162,7 +162,9 @@ class ConfidenceBelief(Belief):
 
 if __name__ == "__main__":
     test_confidence = BeliefBase()
-
+    print("---------------------------------------------------------")
+    print("Tests using specified confidence value to order beliefs")
+    print("---------------------------------------------------------")
     test_confidence.add_belief("p", 0.8)
     print(f">>>1\n {test_confidence}")
     test_confidence.add_belief("q", 0.5)
@@ -180,6 +182,9 @@ if __name__ == "__main__":
     test_confidence.add_belief("~s & s", 0.96)
     print(f">>>8\n {test_confidence}")
 
+    print("---------------------------------------------------------")
+    print("Tests using rank to order beliefs")
+    print("---------------------------------------------------------")
     test_rank = BeliefBase()
     test_rank.add_belief("p")
     print(f">>>1\n {test_rank}")
