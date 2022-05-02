@@ -4,16 +4,16 @@
 ### How to run the client
 
 
-**With confidence** 
+**With confidence**
 
 ```{bash}
 python cli.py --confidence   
 ```
 
-**Without confidence** 
+**Without confidence**
 
 ```{bash}
 python cli.py
 ```
 
-
+```
