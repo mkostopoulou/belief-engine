@@ -1,5 +1,7 @@
 # belief-engine
-
+### Required libraries
+Sympy
+Numpy
 
 ### How to run the client
 The client will allow the user to:
